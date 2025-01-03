@@ -1,10 +1,14 @@
 import { DataTypes } from 'sequelize';
+import Department from './DepartmentModel.js';
+import Designation from './DesignationModel.js';
+import {BankInfo} from './BankInfoModel.js';
+import {EducationDetails} from './EducationModel.js';
 import connectDB from '../config/DB.js';
 const sequelize = connectDB();
 
 const Employee = sequelize.define('Employee', {
   employeeId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(20),
     autoIncrement: true,
     primaryKey: true,
   },
@@ -39,12 +43,20 @@ const Employee = sequelize.define('Employee', {
     allowNull: false,
   },
   department_id: {
-    type: DataTypes.ENUM('All', 'Finance', 'Developer', 'Executive','HR'),
-    allowNull: false
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Department',
+      key: 'department_id',
+    },
+    onDelete: 'SET NULL',
   },
-  designation: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
+  designation_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'Designation',
+      key: 'designation_id',
+    },
+    onDelete: 'SET NULL',
   },
   company_name: {
     type: DataTypes.STRING(100),
@@ -55,7 +67,7 @@ const Employee = sequelize.define('Employee', {
     allowNull: true,
   },
   profile_image: {
-    type: DataTypes.BLOB('long'), // Storing profile image data
+    type: DataTypes.STRING, // Storing Cloudinary URL
     allowNull: true,
   },
   status: {
@@ -67,6 +79,7 @@ const Employee = sequelize.define('Employee', {
   tableName: 'Employee',
   timestamps: true, 
 });
+
 
 sequelize.sync({ alter: true })
   .then(() => console.log("Employee synchronized!"))
